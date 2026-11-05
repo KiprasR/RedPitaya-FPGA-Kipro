@@ -14,19 +14,13 @@ module red_pitaya_top #(
     inout wire DDR_odt, DDR_ras_n, DDR_reset_n, DDR_we_n,
     output wire [7:0] led_o
 );
-    wire fclk, clk, resetn;
-    system system_i (.FCLK_CLK0(fclk), .FCLK_RESET0_N(resetn), .*);
+    wire fclk, clk;
+    system system_i (.FCLK_CLK0(fclk), .*);
     BUFG clock_buffer (.I(fclk), .O(clk));
-
-    (* ASYNC_REG = "TRUE" *) reg [1:0] reset_sync = 2'b00;
-    always @(posedge clk or negedge resetn)
-        if (!resetn) reset_sync <= 2'b00;
-        else         reset_sync <= {reset_sync[0], 1'b1};
 
     reg [26:0] counter = '0;
     always @(posedge clk)
-        if (!reset_sync[1]) counter <= '0;
-        else                counter <= counter + 1'b1;
+        counter <= counter + 1'b1;
 
     // 125 MHz / 2^27 = 0.9313 Hz: about 0.537 seconds per state.
     assign led_o = {8{counter[26]}};

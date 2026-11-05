@@ -32,7 +32,7 @@ set_property -dict [list \
     CONFIG.PCW_CAN1_PERIPHERAL_ENABLE {0} \
     CONFIG.PCW_TTC0_PERIPHERAL_ENABLE {0} \
     CONFIG.PCW_EN_CLK0_PORT {1} \
-    CONFIG.PCW_EN_RST0_PORT {1} \
+    CONFIG.PCW_EN_RST0_PORT {0} \
     CONFIG.PCW_EN_CLK1_PORT {0} \
     CONFIG.PCW_EN_CLK2_PORT {0} \
     CONFIG.PCW_EN_CLK3_PORT {0} \
@@ -54,11 +54,7 @@ connect_bd_intf_net [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_sy
 # Copy the PS pin metadata exactly (Vivado may report 124999999 Hz).
 set led_fclk_hz [get_property CONFIG.FREQ_HZ [get_bd_pins processing_system7/FCLK_CLK0]]
 create_bd_port -dir O -type clk -freq_hz $led_fclk_hz FCLK_CLK0
-create_bd_port -dir O -type rst FCLK_RESET0_N
-set_property CONFIG.ASSOCIATED_RESET {FCLK_RESET0_N} [get_bd_ports FCLK_CLK0]
-set_property CONFIG.POLARITY {ACTIVE_LOW} [get_bd_ports FCLK_RESET0_N]
 connect_bd_net [get_bd_pins processing_system7/FCLK_CLK0] [get_bd_ports FCLK_CLK0]
-connect_bd_net [get_bd_pins processing_system7/FCLK_RESET0_N] [get_bd_ports FCLK_RESET0_N]
 
 validate_bd_design
 save_bd_design

@@ -98,7 +98,9 @@ source $path_ip/system.tcl
 
 # generate SDK files
 generate_target all [get_files    system.bd]
-make_wrapper -files [get_files *.bd] -top
+if {$prj_name != "v0.94"} {
+   make_wrapper -files [get_files *.bd] -top
+}
 
 write_hwdef -force       -file    $path_sdk/red_pitaya.hwdef
 
@@ -110,6 +112,11 @@ write_hwdef -force       -file    $path_sdk/red_pitaya.hwdef
 ################################################################################
 
 
+if {$prj_name == "v0.94"} {
+   # LED-only top instantiates system.bd directly. No application RTL or FIFO IP.
+   add_files -fileset sources_1 -norecurse $path_rtl_prj/red_pitaya_top.sv
+   add_files -fileset constrs_1 $path_sdc/red_pitaya.xdc
+} else {
 if {$prj_name != "pyrpl"} {
    add_files -fileset sources_1      ../../$path_rtl
    add_files -fileset constrs_1      $path_sdc/red_pitaya.xdc
@@ -129,6 +136,7 @@ source ${path_ip_top}/asg_dat_fifo/asg_dat_fifo.tcl
 
 if {[file isdirectory $path_ip_top/sync_fifo]} {
 source ${path_ip_top}/sync_fifo/sync_fifo.tcl
+}
 }
 
 if {[file exists $path_sdc_prj/red_pitaya.xdc]} {
